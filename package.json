@@ -5,13 +5,13 @@
   "description": "Controlled lock-less package.json SCA worst-case test.",
   "dependencies": {
     "lodash": "4.17.11",
-    "minimist": "^1.2.0",
-    "debug": "2.6.8"
+    "mkdirp": "0.5.1",
+    "semver": "^7.0.0"
   },
   "devDependencies": {
     "underscore": "1.12.0"
   },
   "overrides": {
-    "debug": "2.6.9"
+    "minimist": "1.2.8"
   }
 }
