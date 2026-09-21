@@ -1,0 +1,17 @@
+{
+  "name": "sca-test-npm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Controlled lock-less package.json SCA worst-case test.",
+  "dependencies": {
+    "lodash": "4.17.11",
+    "minimist": "^1.2.0",
+    "debug": "2.6.8"
+  },
+  "devDependencies": {
+    "underscore": "1.12.0"
+  },
+  "overrides": {
+    "debug": "2.6.9"
+  }
+}
