@@ -52,3 +52,7 @@ overridden to a version outside its own spec. That is why the earlier scan showe
 generation failing (minimist unresolved, no healthy packages) — a malformed
 manifest, not a scanner bug. npm `overrides` are for **transitive** versions,
 which is what this version tests.
+
+## New edge case (regression re-test) — scoped devDependency
+`devDependencies` adds `@types/semver@7.5.0` (a scoped package name).
+- **PASS:** `@types/semver@7.5.0` is healthy and marked **dev** scope.
