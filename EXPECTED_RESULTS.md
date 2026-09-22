@@ -7,9 +7,12 @@ Lock-less (no `package-lock.json`), so generation runs
 
 | bucket | packages |
 |--------|----------|
-| Vulnerable | `lodash@4.17.11` (prod), `underscore@1.12.0` (dev) |
-| Healthy | `mkdirp@0.5.1`, `semver@7.x`, `minimist@1.2.8` (overridden transitive) |
+| Vulnerable | `lodash@4.17.11` (prod), `underscore@1.12.0` (dev), `lodash@4.17.15` (via alias `lod`), `tough-cookie@2.3.4` (range), `ini@1.3.5` (optional) |
+| Healthy | `mkdirp@0.5.1`, `semver@7.x`, `minimist@1.2.8` (overridden transitive), `@types/semver@7.5.0` (dev), `punycode@1.4.1` (transitive) |
 | Unresolved | none |
+
+`local-widget` is a `file:` link to the repo's own code and is excluded from the
+resolved graph (or shown healthy at 1.0.0; either is fine).
 
 ## Vulnerabilities
 - **`lodash@4.17.11`** — prototype pollution, `CVE-2019-10744` and others (fixed
@@ -56,3 +59,39 @@ which is what this version tests.
 ## New edge case (regression re-test) — scoped devDependency
 `devDependencies` adds `@types/semver@7.5.0` (a scoped package name).
 - **PASS:** `@types/semver@7.5.0` is healthy and marked **dev** scope.
+
+## Round 2 edge cases
+
+### A. npm alias (`"lod": "npm:lodash@4.17.15"`)
+The dependency key is `lod` but the real package is `lodash`, at a second
+version. The generated lock records `node_modules/lod` with `"name": "lodash"`.
+- **PASS:** a second `lodash@4.17.15` entry, **vulnerable** (`CVE-2020-8203`,
+  `CVE-2021-23337`, fixed 4.17.19 / 4.17.21), alongside `lodash@4.17.11`.
+- **FAIL:** an entry named `lod` (unresolved or "healthy" because no advisory
+  matches that name), or only one lodash version.
+
+### B. Range that resolves to a still-vulnerable version (`tough-cookie ~2.3.0`)
+`~2.3.0` resolves to `2.3.4`, the last 2.3.x. It is vulnerable to
+`CVE-2023-26136` (prototype pollution, fixed 4.1.3). Pulls `punycode@1.4.1`
+(healthy transitive).
+- **PASS:** `tough-cookie@2.3.4` vulnerable; `punycode@1.4.1` healthy.
+- **FAIL:** tough-cookie unresolved (range not resolved) or healthy.
+
+### C. `optionalDependencies` scope (`ini@1.3.5`)
+`ini@1.3.5` is vulnerable (`CVE-2020-7788`, prototype pollution, fixed 1.3.6).
+Zero deps. The lock marks it `"optional": true`.
+- **PASS:** `ini@1.3.5` vulnerable, scope **production** (or "optional"), not dev.
+- **FAIL:** ini missing (optional deps dropped) or marked dev.
+
+### D. `file:` local dependency (`local-widget`)
+`"local-widget": "file:./local-widget"`. The manifest directory must be copied
+whole; if only `package.json` is copied, `npm install --package-lock-only` dies
+with `ENOENT ... local-widget/package.json` and the WHOLE generation fails.
+- **PASS:** generation succeeds; `local-widget` is excluded or healthy at 1.0.0;
+  every other result above is unchanged.
+- **FAIL:** 0 healthy / everything unresolved / 0 vulns (false all-clear).
+
+### Round 2 pass / fail (combined)
+- PASS: 5 vulnerable (`lodash@4.17.11`, `lodash@4.17.15`, `tough-cookie@2.3.4`,
+  `ini@1.3.5`, `underscore@1.12.0` dev); healthy `mkdirp`, `semver`,
+  `minimist@1.2.8`, `@types/semver`, `punycode@1.4.1`; 0 unresolved.
