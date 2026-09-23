@@ -100,10 +100,11 @@ with `ENOENT ... local-widget/package.json` and the WHOLE generation fails.
 
 ### A. A transitive only a devDependency pulls in (`strip-ansi 3.0.1`, dev)
 `strip-ansi@3.0.1` is healthy and only needed in development. It pulls
-`ansi-regex@2.1.1`, which is vulnerable (`CVE-2021-3807` ReDoS, no 2.x fix) and
-is reachable from no production dependency.
+`ansi-regex@2.1.1`, which is reachable from no production dependency. (The
+`CVE-2021-3807` ReDoS starts at 3.0.0; 2.1.1 is healthy, confirmed with
+`npm audit`.)
 - **PASS:** `strip-ansi@3.0.1` healthy, **DEV**, direct; `ansi-regex@2.1.1`
-  vulnerable, **DEV**, transitive.
+  healthy, **DEV**, transitive.
 - **FAIL:** `ansi-regex@2.1.1` marked PROD (the lock's dev-only status ignored).
 
 ### B. A transitive shared by a devDependency and a dependency (`optimist 0.6.1`, dev)
