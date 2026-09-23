@@ -2,7 +2,7 @@
   "name": "sca-test-npm",
   "version": "1.0.0",
   "private": true,
-  "description": "Controlled lock-less package.json SCA worst-case test.",
+  "description": "Controlled lock-less package.json SCA worst-case test (round 2).",
   "dependencies": {
     "lodash": "4.17.11",
     "mkdirp": "0.5.1",
