@@ -95,3 +95,21 @@ with `ENOENT ... local-widget/package.json` and the WHOLE generation fails.
 - PASS: 5 vulnerable (`lodash@4.17.11`, `lodash@4.17.15`, `tough-cookie@2.3.4`,
   `ini@1.3.5`, `underscore@1.12.0` dev); healthy `mkdirp`, `semver`,
   `minimist@1.2.8`, `@types/semver`, `punycode@1.4.1`; 0 unresolved.
+
+## Round 3 edge cases — dev-only transitives
+
+### A. A transitive only a devDependency pulls in (`strip-ansi 3.0.1`, dev)
+`strip-ansi@3.0.1` is healthy and only needed in development. It pulls
+`ansi-regex@2.1.1`, which is vulnerable (`CVE-2021-3807` ReDoS, no 2.x fix) and
+is reachable from no production dependency.
+- **PASS:** `strip-ansi@3.0.1` healthy, **DEV**, direct; `ansi-regex@2.1.1`
+  vulnerable, **DEV**, transitive.
+- **FAIL:** `ansi-regex@2.1.1` marked PROD (the lock's dev-only status ignored).
+
+### B. A transitive shared by a devDependency and a dependency (`optimist 0.6.1`, dev)
+`optimist@0.6.1` (dev) pulls `wordwrap@0.0.3` (dev-only, healthy) and
+`minimist`, which the production `mkdirp` also pulls (and `overrides` pins to
+1.2.8).
+- **PASS:** `wordwrap@0.0.3` healthy **DEV** transitive; `minimist@1.2.8` stays
+  **PROD** (shared with a production dependency wins).
+- **FAIL:** `minimist` flips to DEV, or `wordwrap` shows PROD.
