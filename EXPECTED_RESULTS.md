@@ -114,3 +114,10 @@ with `ENOENT ... local-widget/package.json` and the WHOLE generation fails.
 - **PASS:** `wordwrap@0.0.3` healthy **DEV** transitive; `minimist@1.2.8` stays
   **PROD** (shared with a production dependency wins).
 - **FAIL:** `minimist` flips to DEV, or `wordwrap` shows PROD.
+
+## Round 3 additions (upgrade-impact fixtures, Oct 2026)
+- `axios@0.21.1` (prod) — KNOWN-VULNERABLE (many advisories; highest fix 1.18.0). Pulls
+  `follow-redirects` (resolves to a healthy latest 1.15.x).
+- `typescript@5.4.5` (dev) — healthy; present so `tsc --noEmit` can run as the execution check.
+- `src/http.ts`, `lib/settings.js`, `lib/decoy.js` add real API usage; see
+  `EXPECTED_UPGRADE_VERDICTS.md`.
