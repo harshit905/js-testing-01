@@ -13,3 +13,5 @@ See `EXPECTED_RESULTS.md` for the ground truth.
 3. Scan in CodeAnt, compare to `EXPECTED_RESULTS.md`.
 
 Do NOT commit `package-lock.json`.
+
+Scan marker: 2026-10-01T04:37Z (fresh commit for the test-environment upgrade-impact run).
