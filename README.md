@@ -15,3 +15,5 @@ See `EXPECTED_RESULTS.md` for the ground truth.
 Do NOT commit `package-lock.json`.
 
 Scan marker: 2026-10-01T04:37Z (fresh commit for the test-environment upgrade-impact run).
+
+Scan marker: 2026-10-01T20:45Z (fresh commit for the test-environment rescan).
